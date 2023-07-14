@@ -1,0 +1,55 @@
+import googlemaps
+
+# Initialize the Google Maps client
+gmaps = googlemaps.Client(key='YOUR_API_ADDRESS')
+
+# Create empty lists for the address, geolocation, phone number, email, and opening hours data
+addresses = []
+latitudes = []
+longitudes = []
+phone_numbers = []
+emails = []
+opening_hours = []
+
+# Loop through the data and retrieve the address, geolocation, phone number, email, and opening hours for each place name
+for place in target_customers_list:
+    try:
+        # Get the place details using Google Maps API
+        geocode_result = gmaps.geocode(place)
+        
+        if geocode_result:
+            # Extract the relevant information from the geocode result
+            formatted_address = geocode_result[0]['formatted_address']
+            location = geocode_result[0]['geometry']['location']
+            
+            # Retrieve additional details using the place_id
+            place_id = geocode_result[0]['place_id']
+            place_details = gmaps.place(place_id=place_id, fields=['formatted_phone_number', 'website', 'opening_hours'])
+            
+            phone_number = place_details['result'].get('formatted_phone_number')
+            email = place_details['result'].get('website')
+            opening_hour = place_details['result'].get('opening_hours')
+            
+            # Append the data to the respective lists
+            addresses.append(formatted_address)
+            latitudes.append(location['lat'])
+            longitudes.append(location['lng'])
+            phone_numbers.append(phone_number)
+            emails.append(email)
+            opening_hours.append(opening_hour)
+        else:
+            # If the geocode result is empty, set the values to None
+            addresses.append(None)
+            latitudes.append(None)
+            longitudes.append(None)
+            phone_numbers.append(None)
+            emails.append(None)
+            opening_hours.append(None)
+    except:
+        # If an error occurs, set the values to None
+        addresses.append(None)
+        latitudes.append(None)
+        longitudes.append(None)
+        phone_numbers.append(None)
+        emails.append(None)
+        opening_hours.append(None)
